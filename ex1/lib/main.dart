@@ -1,117 +1,227 @@
 import 'package:flutter/material.dart';
+import './widgets/appbar_buttons.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(
+    title: "Lab Exercice One",
+    theme: ThemeData(primarySwatch: Colors.brown),
+    debugShowCheckedModeBanner: false,
+    home: Home(),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
+}
+
+class _HomeState extends State<Home> {
+  var isAppBar = true;
+  var isColors = true;
+  double _size = 200;
+  var _red = 0;
+  var _green = 0;
+  var _blue = 0;
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
       appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
+        actions: isAppBar
+            ? <Widget>[
+                AppBarButton(
+                    onPressed: () {
+                      setState(() {
+                        _size -= _size > 100 ? 50 : 0;
+                      });
+                    },
+                    buttonText: "-"),
+                AppBarButton(
+                    onPressed: () {
+                      setState(() {
+                        _size = 100;
+                      });
+                    },
+                    buttonText: "S"),
+                AppBarButton(
+                    onPressed: () {
+                      setState(() {
+                        _size = 200;
+                      });
+                    },
+                    buttonText: "M"),
+                AppBarButton(
+                    onPressed: () {
+                      setState(() {
+                        _size = 400;
+                      });
+                    },
+                    buttonText: "L"),
+                AppBarButton(
+                    onPressed: () {
+                      setState(() {
+                        _size += _size < 400 ? 50 : 0;
+                      });
+                    },
+                    buttonText: "+"),
+              ]
+            : null,
+        title: Text("My Icon"),
       ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      drawer: buildDrawer(),
+      body: Column(
+        children: [
+          Center(
+            child: Container(
+              margin: EdgeInsets.symmetric(vertical: 120),
+              child: Icon(
+                Icons.alarm,
+                size: _size,
+                color: Color.fromRGBO(_red, _green, _blue, 1),
+              ),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+          ),
+        ],
+      ),
+      bottomSheet: SizedBox(
+        child: Container(
+          height: 196,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                height: 50,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Slider(
+                        divisions: 255,
+                        min: 0,
+                        max: 255,
+                        value: _red.toDouble(),
+                        onChanged: (double s) {
+                          setState(
+                            () {
+                              _red = s.toInt();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    isColors
+                        ? FloatingActionButton.extended(
+                            onPressed: () {
+                              setState(() {
+                                _red = 255;
+                                _green = 0;
+                                _blue = 0;
+                              });
+                            },
+                            label: Text("$_red"),
+                            backgroundColor: Colors.red,
+                          )
+                        : Text("$_red"),
+                  ],
+                ),
+              ),
+              Container(
+                height: 50,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Slider(
+                        divisions: 255,
+                        min: 0,
+                        max: 255,
+                        value: _green.toDouble(),
+                        onChanged: (double s) {
+                          setState(
+                            () {
+                              _green = s.toInt();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    isColors
+                        ? FloatingActionButton.extended(
+                            onPressed: () {
+                              setState(() {
+                                _red = 0;
+                                _green = 255;
+                                _blue = 0;
+                              });
+                            },
+                            label: Text("$_green"),
+                            backgroundColor: Colors.green,
+                          )
+                        : Text("$_green"),
+                  ],
+                ),
+              ),
+              Container(
+                height: 50,
+                child: Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: Slider(
+                        divisions: 255,
+                        min: 0,
+                        max: 255,
+                        value: _blue.toDouble(),
+                        onChanged: (double s) {
+                          setState(
+                            () {
+                              _blue = s.toInt();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                    isColors
+                        ? FloatingActionButton.extended(
+                            onPressed: () {
+                              setState(() {
+                                _red = 0;
+                                _green = 0;
+                                _blue = 255;
+                              });
+                            },
+                            label: Text("$_blue"),
+                            backgroundColor: Colors.blue,
+                          )
+                        : Text("$_blue"),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Drawer buildDrawer() {
+    return Drawer(
+      child: ListView(
+        children: <Widget>[
+          CheckboxListTile(
+            activeColor: Colors.white,
+            title: Text("Allow Resize"),
+            value: isAppBar,
+            onChanged: (val) {
+              setState(() => isAppBar = val);
+            },
+          ),
+          CheckboxListTile(
+            activeColor: Colors.white,
+            title: Text("Allow Change Primer Color"),
+            value: isColors,
+            onChanged: (val) {
+              setState(() => isColors = val);
+            },
+          ),
+        ],
+      ),
     );
   }
 }
